@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="${pelicula.titulo}">Pelicula</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+<header>
+    <a href="/">← Volver</a>
+    <h1 th:text="${pelicula.titulo}">Titulo</h1>
+  </header>
+<main>
+    <div class="row">
+        <img th:if="${pelicula.posterUrl}" th:src="${pelicula.posterUrl}" width="200" />
+        <div>
+            <p th:text="${pelicula.sinopsis}">Sinopsis</p>
+            <p>Duración: <span th:text="${pelicula.duracionMin}">120</span> min</p>
+        </div>
+    </div>
+    <p>Para la demo, las funciones y selección de asientos se gestionan via API.</p>
+</main>
+</body>
+</html>
+

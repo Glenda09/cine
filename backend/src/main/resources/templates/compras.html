@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Mis compras</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+<header>
+    <a href="/">← Volver</a>
+    <h1>Mis compras</h1>
+  </header>
+<main>
+    <div th:if="${#lists.isEmpty(reservas)}">No hay compras o no has iniciado sesión (usa la API /api/auth/* para login).</div>
+    <ul>
+        <li th:each="r: ${reservas}">
+            Reserva <b th:text="${r.id}"></b> - Total $<span th:text="${r.total}"></span> -
+            Estado <span th:text="${r.estado}"></span>
+            <span th:if="${r.estado.name() == 'PAGADA'}"> | <a th:href="@{'/tickets/' + ${r.id} + '.png'}" target="_blank">Descargar QR</a></span>
+        </li>
+    </ul>
+</main>
+</body>
+</html>
+

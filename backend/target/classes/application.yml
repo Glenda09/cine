@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: cine-app
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:postgres}:${DB_PORT:5432}/${DB_NAME:cinedb}
+    username: ${DB_USER:cine}
+    password: ${DB_PASSWORD:cinepass}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+  flyway:
+    enabled: true
+  redis:
+    host: ${REDIS_HOST:redis}
+    port: ${REDIS_PORT:6379}
+
+server:
+  port: ${PORT:8080}
+
+logging:
+  level:
+    org.springframework.security: INFO
+    org.hibernate.SQL: INFO
+
+security:
+  jwt:
+    secret: ${JWT_SECRET:change-me-super-secret}
+    expirationMinutes: ${JWT_EXP_MINUTES:120}
+
+wompi:
+  publicKey: ${WOMPI_PUBLIC_KEY:pub_test_xxx}
+  integrityKey: ${WOMPI_INTEGRITY_KEY:integrity_xxx}
+  eventsSecret: ${WOMPI_EVENTS_SECRET:events_secret_xxx}
+  redirectUrl: ${WOMPI_REDIRECT_URL:http://localhost:8080/checkout/return}
+  currency: COP
+

@@ -1,0 +1,41 @@
+version: "3.9"
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: cinedb
+      POSTGRES_USER: cine
+      POSTGRES_PASSWORD: cinepass
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
+  app:
+    build: ./backend
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: cinedb
+      DB_USER: cine
+      DB_PASSWORD: cinepass
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      JWT_SECRET: supersecretkeymustbeatleast32byteslong1234
+      WOMPI_PUBLIC_KEY: pub_test_YourPublicKey
+      WOMPI_INTEGRITY_KEY: integrity_test_YourIntegrityKey
+      WOMPI_EVENTS_SECRET: events_test_YourEventsSecret
+      WOMPI_REDIRECT_URL: http://localhost:8080/checkout/return
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      - redis
+
+volumes:
+  pgdata:

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Checkout Wompi</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+<main>
+    <h2>Redirigiendo a Wompi…</h2>
+    <form id="wompiForm" method="GET" action="https://checkout.wompi.co/p/">
+        <input type="hidden" name="public-key" th:value="${publicKey}" />
+        <input type="hidden" name="currency" th:value="${currency}" />
+        <input type="hidden" name="amount-in-cents" th:value="${amountInCents}" />
+        <input type="hidden" name="reference" th:value="${reference}" />
+        <input type="hidden" name="redirect-url" th:value="${redirectUrl}" />
+        <input type="hidden" name="signature:integrity" th:value="${signature}" />
+    </form>
+    <script>
+        document.getElementById('wompiForm').submit();
+    </script>
+</main>
+</body>
+</html>
+

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Procesando pago…</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+<main>
+    <h2>Gracias. Estamos confirmando tu pago.</h2>
+    <p>Recibirás confirmación en segundos. Puedes revisar en <a href="/mis-compras">Mis compras</a>.</p>
+    <p th:if="${transactionId}">Transacción: <code th:text="${transactionId}"></code></p>
+    <p>Nota: La confirmación final llega por webhook.</p>
+  </main>
+</body>
+</html>
+

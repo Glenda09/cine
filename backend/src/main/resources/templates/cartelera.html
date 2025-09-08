@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Cartelera</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+<header>
+    <h1>Cartelera</h1>
+    <a href="/">Inicio</a>
+    <a href="/mis-compras">Mis compras</a>
+  </header>
+<main>
+    <div class="grid">
+        <div class="card" th:each="p : ${peliculas}">
+            <img th:if="${p.posterUrl}" th:src="${p.posterUrl}" alt="poster" />
+            <h3 th:text="${p.titulo}">Titulo</h3>
+            <p th:text="${p.sinopsis}">Sinopsis</p>
+            <a th:href="@{'/peliculas/' + ${p.id}}">Ver detalle</a>
+        </div>
+    </div>
+</main>
+</body>
+</html>
+
