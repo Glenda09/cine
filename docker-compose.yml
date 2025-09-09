@@ -37,5 +37,33 @@ services:
       - postgres
       - redis
 
+  # Desarrollo con hot reload (DevTools)
+  app-dev:
+    image: maven:3.9.6-eclipse-temurin-17
+    working_dir: /app
+    command: mvn -Dspring-boot.run.profiles=dev spring-boot:run
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: cinedb
+      DB_USER: cine
+      DB_PASSWORD: cinepass
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      JWT_SECRET: change-me-super-secret
+      WOMPI_PUBLIC_KEY: pub_test_YourPublicKey
+      WOMPI_INTEGRITY_KEY: integrity_test_YourIntegrityKey
+      WOMPI_EVENTS_SECRET: events_test_YourEventsSecret
+      WOMPI_REDIRECT_URL: http://localhost:8080/checkout/return
+    volumes:
+      - ./backend:/app
+      - m2:/root/.m2
+    depends_on:
+      - postgres
+      - redis
+
 volumes:
   pgdata:
+  m2:

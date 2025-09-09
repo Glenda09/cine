@@ -7,13 +7,17 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import com.cine.security.HtmlRedirectEntryPoint;
 
 @Configuration
 public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
 
-    public SecurityConfig(JwtAuthFilter jwtAuthFilter) {
+    private final HtmlRedirectEntryPoint htmlRedirectEntryPoint;
+
+    public SecurityConfig(JwtAuthFilter jwtAuthFilter, HtmlRedirectEntryPoint htmlRedirectEntryPoint) {
         this.jwtAuthFilter = jwtAuthFilter;
+        this.htmlRedirectEntryPoint = htmlRedirectEntryPoint;
     }
 
     @Bean
@@ -29,10 +33,13 @@ public class SecurityConfig {
                                  "/checkout/return",
                                  "/checkout/start/**",
                                  "/mis-compras",
+                                 "/login", "/register", "/logout",
                                  "/tickets/**").permitAll()
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                .requestMatchers("/admin", "/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
+            .exceptionHandling(e -> e.authenticationEntryPoint(htmlRedirectEntryPoint))
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

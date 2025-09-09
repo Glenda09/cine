@@ -37,5 +37,20 @@ public class AuthController {
         String token = authService.login(req.email(), req.password());
         return ResponseEntity.ok(Map.of("token", token));
     }
-}
 
+    // Ayuda: si acceden por GET a /api/auth/login o /api/auth/register, redirige a las páginas HTML
+    @GetMapping("/login")
+    public ResponseEntity<?> loginGet() {
+        return ResponseEntity.status(302).header("Location", "/login").build();
+    }
+    @GetMapping("/register")
+    public ResponseEntity<?> registerGet() {
+        return ResponseEntity.status(302).header("Location", "/register").build();
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> me(org.springframework.security.core.Authentication auth) {
+        if (auth == null) return ResponseEntity.status(401).build();
+        return ResponseEntity.ok(Map.of("principal", auth.getName(), "authorities", auth.getAuthorities()));
+    }
+}

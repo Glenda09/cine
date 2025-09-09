@@ -9,9 +9,11 @@
 <header>
     <a href="/">← Volver</a>
     <h1>Mis compras</h1>
+    <a href="/login" id="linkLogin">Iniciar sesión</a>
+    <a href="/logout" id="linkLogout" style="display:none">Salir</a>
   </header>
 <main>
-    <div th:if="${#lists.isEmpty(reservas)}">No hay compras o no has iniciado sesión (usa la API /api/auth/* para login).</div>
+    <div th:if="${#lists.isEmpty(reservas)}">No hay compras o no has iniciado sesión.</div>
     <ul>
         <li th:each="r: ${reservas}">
             Reserva <b th:text="${r.id}"></b> - Total $<span th:text="${r.total}"></span> -
@@ -20,6 +22,11 @@
         </li>
     </ul>
 </main>
+<script>
+  function hasToken(){ return document.cookie.split('; ').some(x=>x.startsWith('AUTH=')); }
+  const logged = hasToken();
+  document.getElementById('linkLogin').style.display = logged? 'none':'inline';
+  document.getElementById('linkLogout').style.display = logged? 'inline':'none';
+</script>
 </body>
 </html>
-
