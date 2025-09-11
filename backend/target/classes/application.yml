@@ -2,9 +2,9 @@ spring:
   application:
     name: cine-app
   datasource:
-    url: jdbc:postgresql://${DB_HOST:postgres}:${DB_PORT:5432}/${DB_NAME:cinedb}
+    url: jdbc:postgresql://${DB_HOST:postgres}:${DB_PORT:5432}/${DB_NAME:cine}
     username: ${DB_USER:cine}
-    password: ${DB_PASSWORD:cinepass}
+    password: ${DB_PASSWORD:admin}
   jpa:
     hibernate:
       ddl-auto: validate

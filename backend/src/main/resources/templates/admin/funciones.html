@@ -26,7 +26,9 @@
         <option th:each="s: ${salas}" th:value="${s.id}" th:text="${s.nombre}"></option>
       </select>
     </div>
-    <div class="col-md-3"><input class="form-control" name="horaInicio" placeholder="YYYY-MM-DDTHH:MM" required></div>
+    <div class="col-md-3">
+      <input class="form-control" name="horaInicio" type="datetime-local" required>
+    </div>
     <div class="col-md-2"><input class="form-control" name="precioBase" placeholder="Precio" type="number" step="1" required></div>
     <div class="col-md-1"><button class="btn btn-primary w-100" type="submit">Crear</button></div>
   </form>

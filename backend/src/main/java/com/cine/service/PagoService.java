@@ -23,18 +23,21 @@ public class PagoService {
     private final String wompiIntegrityKey;
     private final String redirectUrl;
     private final String currency;
+    private final String checkoutBaseUrl;
 
     public PagoService(PagoRepository pagoRepository, ReservaRepository reservaRepository,
                        @Value("${wompi.publicKey}") String wompiPublicKey,
                        @Value("${wompi.integrityKey}") String wompiIntegrityKey,
                        @Value("${wompi.redirectUrl}") String redirectUrl,
-                       @Value("${wompi.currency}") String currency) {
+                       @Value("${wompi.currency}") String currency,
+                       @Value("${wompi.checkoutBaseUrl:https://checkout.wompi.sv/p/}") String checkoutBaseUrl) {
         this.pagoRepository = pagoRepository;
         this.reservaRepository = reservaRepository;
         this.wompiPublicKey = wompiPublicKey;
         this.wompiIntegrityKey = wompiIntegrityKey;
         this.redirectUrl = redirectUrl;
         this.currency = currency;
+        this.checkoutBaseUrl = checkoutBaseUrl;
     }
 
     @Transactional
@@ -56,6 +59,7 @@ public class PagoService {
     public String getWompiPublicKey() { return wompiPublicKey; }
     public String getRedirectUrl() { return redirectUrl; }
     public String getCurrency() { return currency; }
+    public String getCheckoutBaseUrl() { return checkoutBaseUrl; }
 
     public String buildIntegritySignature(String reference, long amountInCents, String currency) {
         try {

@@ -21,16 +21,19 @@ public class AdminPageController {
     private final FuncionRepository funcionRepository;
     private final AsientoRepository asientoRepository;
     private final AsientoFuncionRepository asientoFuncionRepository;
+    private final UsuarioRepository usuarioRepository;
 
     public AdminPageController(CategoriaRepository categoriaRepository, PeliculaRepository peliculaRepository,
                                SalaRepository salaRepository, FuncionRepository funcionRepository,
-                               AsientoRepository asientoRepository, AsientoFuncionRepository asientoFuncionRepository) {
+                               AsientoRepository asientoRepository, AsientoFuncionRepository asientoFuncionRepository,
+                               UsuarioRepository usuarioRepository) {
         this.categoriaRepository = categoriaRepository;
         this.peliculaRepository = peliculaRepository;
         this.salaRepository = salaRepository;
         this.funcionRepository = funcionRepository;
         this.asientoRepository = asientoRepository;
         this.asientoFuncionRepository = asientoFuncionRepository;
+        this.usuarioRepository = usuarioRepository;
     }
 
     @GetMapping
@@ -127,6 +130,13 @@ public class AdminPageController {
             asientoFuncionRepository.save(AsientoFuncion.builder().funcion(f).asiento(a).estado(EstadoAsientoFuncion.LIBRE).build());
         }
         return "redirect:/admin/funciones";
+    }
+
+    // Usuarios (roles)
+    @GetMapping("/usuarios")
+    public String usuarios(Model model) {
+        model.addAttribute("list", usuarioRepository.findAll());
+        return "admin/usuarios";
     }
 }
 

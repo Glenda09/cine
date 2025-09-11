@@ -3,9 +3,9 @@ services:
   postgres:
     image: postgres:15
     environment:
-      POSTGRES_DB: cinedb
-      POSTGRES_USER: cine
-      POSTGRES_PASSWORD: cinepass
+      POSTGRES_DB: cine
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
     ports:
       - "5432:5432"
     volumes:
@@ -21,9 +21,9 @@ services:
     environment:
       DB_HOST: postgres
       DB_PORT: 5432
-      DB_NAME: cinedb
-      DB_USER: cine
-      DB_PASSWORD: cinepass
+      DB_NAME: cine
+      DB_USER: postgres
+      DB_PASSWORD: admin
       REDIS_HOST: redis
       REDIS_PORT: 6379
       JWT_SECRET: supersecretkeymustbeatleast32byteslong1234
@@ -47,9 +47,9 @@ services:
     environment:
       DB_HOST: postgres
       DB_PORT: 5432
-      DB_NAME: cinedb
-      DB_USER: cine
-      DB_PASSWORD: cinepass
+      DB_NAME: cine
+      DB_USER: postgres
+      DB_PASSWORD: admin
       REDIS_HOST: redis
       REDIS_PORT: 6379
       JWT_SECRET: change-me-super-secret

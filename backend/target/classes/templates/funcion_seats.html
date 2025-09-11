@@ -44,11 +44,27 @@
       const count = window.getSelectedSeats? window.getSelectedSeats().length : 0;
       document.getElementById('selCount').textContent = count;
     }
+    function getAuthToken(){
+      const m = document.cookie.match(/(?:^|; )AUTH=([^;]+)/);
+      return (m? decodeURIComponent(m[1]) : null) || localStorage.getItem('AUTH');
+    }
     async function reservar(funcionId){
       const ids = window.getSelectedSeats();
       if (!ids || ids.length===0){ alert('Selecciona al menos un asiento'); return; }
-      const res = await fetch('/api/reservas/hold', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ funcionId: funcionId, asientoIds: ids }) });
-      if (res.status===401 || res.status===403){ window.location.href='/login'; return; }
+      const token = getAuthToken();
+      const headers = {'Content-Type':'application/json','Accept':'application/json'};
+      if (token) headers['Authorization'] = 'Bearer ' + token;
+      const res = await fetch('/api/reservas/hold', {
+        method:'POST',
+        headers,
+        body: JSON.stringify({ funcionId: funcionId, asientoIds: ids }),
+        credentials:'include'
+      });
+      if (res.status===401 || res.status===403){
+        // Si por alguna razon no se pudo autenticar, redirige a login
+        window.location.href='/login';
+        return;
+      }
       if (!res.ok){ const t=await res.text(); alert('No se pudo reservar: '+t); return; }
       const data = await res.json();
       window.location.href = `/checkout/start/${data.reservaId}`;

@@ -4,7 +4,7 @@ Proyecto demo de cine con backend Spring Boot + Thymeleaf minimal, PostgreSQL, R
 
 Servicios:
 - Backend: :8080
-- PostgreSQL 15: :5432 (DB: cinedb, user: cine, pass: cinepass)
+- PostgreSQL 15: :5432 (DB: cine, user: postgres, pass: admin)
 - Redis 7: :6379
 
 Requisitos:
@@ -42,3 +42,15 @@ Notas:
 - Seguridad: JWT simple. Usa JWT_SECRET para firmar tokens.
 - QR: generado con ZXing a partir del id de la reserva.
 
+## Configuración Wompi (SV)
+
+Variables disponibles en `application.yml` (puedes sobre-escribir por env):
+
+- `WOMPI_PUBLIC_KEY`
+- `WOMPI_INTEGRITY_KEY`
+- `WOMPI_EVENTS_SECRET`
+- `WOMPI_REDIRECT_URL`
+- `WOMPI_CHECKOUT_BASE` (por defecto `https://checkout.wompi.sv/p/`)
+- `WOMPI_CURRENCY` (por defecto `USD`)
+
+Si usas otra región (p. ej. CO), ajusta `WOMPI_CHECKOUT_BASE` a `https://checkout.wompi.co/p/` y la moneda.

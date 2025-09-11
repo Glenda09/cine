@@ -53,12 +53,13 @@ public class PublicController {
 
     @GetMapping("/peliculas/{id}")
     public String pelicula(@PathVariable Long id, Model model) {
-        Pelicula p = peliculaRepository.findById(id).orElseThrow();
-        model.addAttribute("pelicula", p);
-        // funciones próximas 7 días
-        var start = java.time.LocalDateTime.now();
-        var end = start.plusDays(7);
-        model.addAttribute("funciones", funcionRepository.findByPeliculaAndHoraInicioBetween(p, start, end));
+    Pelicula p = peliculaRepository.findById(id).orElseThrow();
+    model.addAttribute("pelicula", p);
+    // funciones próximas 7 días
+    var start = java.time.LocalDateTime.now();
+    var end = start.plusDays(7);
+    // use pelicula id search to avoid entity-equality issues from detached instances
+    model.addAttribute("funciones", funcionRepository.findByPeliculaIdAndHoraInicioBetween(id, start, end));
         return "pelicula";
     }
 }

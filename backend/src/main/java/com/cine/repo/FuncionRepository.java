@@ -9,6 +9,8 @@ import java.util.List;
 
 public interface FuncionRepository extends JpaRepository<Funcion, Long> {
     List<Funcion> findByPeliculaAndHoraInicioBetween(Pelicula pelicula, LocalDateTime start, LocalDateTime end);
+    List<Funcion> findByPeliculaIdAndHoraInicioBetween(Long peliculaId, LocalDateTime start, LocalDateTime end);
+    List<Funcion> findByPelicula_IdAndHoraInicioBetween(Long peliculaId, LocalDateTime start, LocalDateTime end);
     List<Funcion> findByHoraInicioBetween(LocalDateTime start, LocalDateTime end);
 }
 

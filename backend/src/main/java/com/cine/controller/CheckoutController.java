@@ -22,6 +22,7 @@ public class CheckoutController {
         model.addAttribute("amountInCents", cents);
         model.addAttribute("reference", p.getReferencia());
         model.addAttribute("redirectUrl", pagoService.getRedirectUrl());
+        model.addAttribute("checkoutBaseUrl", pagoService.getCheckoutBaseUrl());
         model.addAttribute("signature", pagoService.buildIntegritySignature(p.getReferencia(), cents, pagoService.getCurrency()));
         return "checkout";
     }
