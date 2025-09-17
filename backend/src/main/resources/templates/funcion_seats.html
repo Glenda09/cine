@@ -53,16 +53,27 @@
       const count = window.getSelectedSeats? window.getSelectedSeats().length : 0;
       document.getElementById('selCount').textContent = count;
     }
+    function normalizeToken(value){
+      if (!value) return null;
+      const trimmed = value.trim().replace(/^"+|"+$/g, '');
+      if (!trimmed || trimmed === 'null' || trimmed === 'undefined') return null;
+      return trimmed;
+    }
     function getAuthToken(){
       const m = document.cookie.match(/(?:^|; )AUTH=([^;]+)/);
-      return (m? decodeURIComponent(m[1]) : null) || localStorage.getItem('AUTH');
+      const fromCookie = m ? normalizeToken(decodeURIComponent(m[1])) : null;
+      if (fromCookie) return fromCookie;
+      return normalizeToken(localStorage.getItem('AUTH'));
     }
     async function reservar(funcionId){
       const ids = window.getSelectedSeats();
       if (!ids || ids.length===0){ alert('Selecciona al menos un asiento'); return; }
       const token = getAuthToken();
-      const headers = {'Content-Type':'application/json','Accept':'application/json'};
-      if (token) headers['Authorization'] = 'Bearer ' + token;
+      if (!token){
+        window.location.href = '/login?next=' + encodeURIComponent(window.location.pathname + window.location.search);
+        return;
+      }
+      const headers = {'Content-Type':'application/json','Accept':'application/json','Authorization':'Bearer ' + token};
       const res = await fetch('/api/reservas/hold', {
         method:'POST',
         headers,
@@ -71,7 +82,7 @@
       });
       if (res.status===401 || res.status===403){
         // Si por alguna razon no se pudo autenticar, redirige a login
-        window.location.href='/login';
+        window.location.href = '/login?next=' + encodeURIComponent(window.location.pathname + window.location.search);
         return;
       }
       if (!res.ok){ const t=await res.text(); alert('No se pudo reservar: '+t); return; }

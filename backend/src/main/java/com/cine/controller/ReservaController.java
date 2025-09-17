@@ -42,6 +42,9 @@ public class ReservaController {
 
     @PostMapping(value = "/reservas/hold", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> hold(@Valid @RequestBody HoldRequest req, Authentication auth) {
+        if (auth == null) {
+            return ResponseEntity.status(401).body(Map.of("error", "No autenticado"));
+        }
         String email = auth.getName();
         List<AsientoFuncion> held = holdService.holdSeats(req.getFuncionId(), req.getAsientoIds(), email, 10);
         List<Long> asientoFuncionIds = held.stream().map(AsientoFuncion::getId).toList();
@@ -54,6 +57,9 @@ public class ReservaController {
 
     @PostMapping("/reservas/checkout")
     public ResponseEntity<?> checkout(@RequestBody CheckoutReq req, Authentication auth) {
+        if (auth == null) {
+            return ResponseEntity.status(401).body(Map.of("error", "No autenticado"));
+        }
         Pago p = pagoService.crearPagoCheckout(req.reservaId());
         var reserva = p.getReserva();
         long cents = reserva.getTotal().movePointRight(2).longValueExact();
@@ -68,4 +74,5 @@ public class ReservaController {
         ));
     }
 }
+
 

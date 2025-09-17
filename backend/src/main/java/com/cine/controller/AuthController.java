@@ -5,6 +5,8 @@ import com.cine.dto.AuthRegisterReq;
 import com.cine.security.JwtUtil;
 import com.cine.service.AuthService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +29,7 @@ public class AuthController {
     public ResponseEntity<?> register(@Valid @RequestBody AuthRegisterReq req) {
         Usuario u = authService.register(req.getNombre(), req.getEmail(), req.getPassword(), RolUsuario.USER);
         String token = jwtUtil.generateToken(u.getEmail(), Map.of("role", u.getRol().name(), "name", u.getNombre()));
-        return ResponseEntity.ok(Map.of("token", token));
+        return respondWithToken(token);
     }
 
     public static record LoginReq(String email, String password) {}
@@ -35,7 +37,18 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginReq req) {
         String token = authService.login(req.email(), req.password());
-        return ResponseEntity.ok(Map.of("token", token));
+        return respondWithToken(token);
+    }
+
+    private ResponseEntity<?> respondWithToken(String token) {
+        ResponseCookie cookie = ResponseCookie.from("AUTH", token)
+                .path("/")
+                .sameSite("Lax")
+                .httpOnly(false)
+                .build();
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body(Map.of("token", token));
     }
 
     // Ayuda: si acceden por GET a /api/auth/login o /api/auth/register, redirige a las páginas HTML

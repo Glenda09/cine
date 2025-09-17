@@ -2,8 +2,10 @@ spring:
   application:
     name: cine-app
   datasource:
-    url: jdbc:postgresql://${DB_HOST:postgres}:${DB_PORT:5432}/${DB_NAME:cine}
-    username: ${DB_USER:cine}
+    # Defaults adjusted for local PostgreSQL
+    # Uses environment variables when provided; falls back to local DB "cine"
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:cine}
+    username: ${DB_USER:postgres}
     password: ${DB_PASSWORD:admin}
   jpa:
     hibernate:
@@ -36,5 +38,7 @@ wompi:
   integrityKey: ${WOMPI_INTEGRITY_KEY:integrity_xxx}
   eventsSecret: ${WOMPI_EVENTS_SECRET:events_secret_xxx}
   redirectUrl: ${WOMPI_REDIRECT_URL:http://localhost:8080/checkout/return}
-  currency: COP
+  currency: USD
+  # Dominio de Checkout para Wompi SV (configurable)
+  checkoutBaseUrl: ${WOMPI_CHECKOUT_BASE:https://checkout.wompi.sv/p/}
 
