@@ -23,9 +23,9 @@
             <div class="list-group" th:if="${!#lists.isEmpty(funciones)}">
                 <a th:each="f : ${funciones}" class="list-group-item list-group-item-action"
                    th:href="@{'/funcion/' + ${f.id} + '/seleccion'}">
-                    <input type="datetime-local" class="form-control d-inline w-auto" 
-                           th:value="${#temporals.format(f.horaInicio, 'yyyy-MM-dd\'T\'HH:mm')}" 
-                           disabled />
+              <input type="datetime-local" class="form-control d-inline w-auto" 
+                  th:value="${#temporals.format(f.horaInicio, 'yyyy-MM-dd''T''HH:mm')}" 
+                  disabled />
                     &nbsp;· Sala <span th:text="${f.sala.nombre}">Sala</span>
                     &nbsp;· Precio $<span th:text="${f.precioBase}">0</span>
                 </a>

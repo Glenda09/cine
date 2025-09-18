@@ -21,31 +21,60 @@
     </div>
   </header>
 <main class="container py-4">
-    <form class="row g-2 mb-3" method="get">
-        <div class="col-auto">
-            <label class="form-label">Fecha</label>
-            <input class="form-control" type="date" name="fecha" th:value="${fecha}">
+    <!-- Menú compra entradas -->
+    <section class="bg-light border rounded p-3 mb-4">
+      <h5 class="mb-3">Compra tus entradas online</h5>
+      <div class="row g-2 align-items-end">
+        <div class="col-sm-3">
+          <label class="form-label">Fecha</label>
+          <input id="cFecha" class="form-control" type="date" th:value="${fecha}" />
         </div>
-        <div class="col-auto">
-            <label class="form-label">Categoría</label>
-            <select class="form-select" name="categoria">
-                <option th:selected="${categoriaSel==null}" value="">Todas</option>
-                <option th:each="c: ${categorias}" th:value="${c.nombre}" th:text="${c.nombre}"
-                        th:selected="${categoriaSel == c.nombre}"></option>
-            </select>
+        <div class="col-sm-3">
+          <label class="form-label">Película</label>
+          <select id="cPelicula" class="form-select">
+            <option value="">Seleccione</option>
+            <option th:each="p: ${peliculas}" th:value="${p.id}" th:text="${p.titulo}"></option>
+          </select>
         </div>
-        <div class="col-auto">
-            <label class="form-label">Clasificación</label>
-            <select class="form-select" name="clasif">
-                <option th:selected="${clasifSel==null}" value="">Todas</option>
-                <option th:each="cl: ${clasifs}" th:value="${cl}" th:text="${cl}"
-                        th:selected="${clasifSel == cl}"></option>
-            </select>
+        <div class="col-sm-2">
+          <label class="form-label">Formato</label>
+          <select id="cFormato" class="form-select">
+            <option value="">Todos</option>
+            <option value="DOSD">2D</option>
+            <option value="TRESD">3D</option>
+            <option value="DBOX">DBOX</option>
+          </select>
         </div>
-        <div class="col-auto align-self-end">
-            <button class="btn btn-primary" type="submit">Filtrar</button>
+        <div class="col-sm-2">
+          <label class="form-label">Hora</label>
+          <select id="cHora" class="form-select"><option value="">--</option></select>
         </div>
-    </form>
+        <div class="col-sm-2">
+          <button id="btnComprar" class="btn btn-danger w-100">Comprar</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Carrusel semanal -->
+    <section class="mb-4">
+      <h4 class="mb-3">Cartelera semanal</h4>
+      <div class="position-relative">
+        <button id="carPrev" class="btn btn-outline-secondary position-absolute top-50 start-0 translate-middle-y">‹</button>
+        <div id="carousel" class="d-flex overflow-auto gap-3 px-5">
+          <div class="card" style="min-width:220px" th:each="p : ${peliculas}">
+              <img class="card-img-top" th:if="${p.posterUrl}" th:src="${p.posterUrl}" alt="poster" />
+              <div class="card-body p-2">
+                  <div class="small text-muted">ESTRENO</div>
+                  <h6 class="card-title" th:text="${p.titulo}">Titulo</h6>
+              </div>
+              <div class="card-footer bg-white">
+                  <a class="btn btn-sm btn-danger w-100" th:href="@{'/peliculas/' + ${p.id}}">Ver horarios</a>
+              </div>
+          </div>
+        </div>
+        <button id="carNext" class="btn btn-outline-secondary position-absolute top-50 end-0 translate-middle-y">›</button>
+      </div>
+    </section>
 
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
         <div class="col" th:each="p : ${peliculas}">
@@ -64,14 +93,55 @@
 </main>
 <script>
   // Mostrar/ocultar enlaces según cookie AUTH
-  function hasToken(){ return document.cookie.split('; ').some(x=>x.startsWith('AUTH=')); }
-  const logged = hasToken();
+  function getToken(){
+    const fromCookie = (document.cookie.match(/(?:^|; )AUTH=([^;]+)/)||[])[1];
+    return fromCookie || localStorage.getItem('AUTH') || '';
+  }
+  function parseJwt(t){ try{ const p=t.split('.')[1]; return JSON.parse(atob(p.replace(/-/g,'+').replace(/_/g,'/'))); }catch(e){ return {}; } }
+  const token = getToken();
+  const logged = !!token;
   document.getElementById('linkLogin').style.display = logged? 'none':'inline';
   document.getElementById('linkRegister').style.display = logged? 'none':'inline';
   document.getElementById('linkLogout').style.display = logged? 'inline':'none';
   // Mostrar acceso admin si existe cookie
   const linkAdmin = document.getElementById('linkAdmin');
-  if (logged && linkAdmin) linkAdmin.style.display = 'inline';
+  const role = parseJwt(token).role || '';
+  if (logged && role==='ADMIN' && linkAdmin) linkAdmin.style.display = 'inline';
+
+  // Carrusel simple
+  const car = document.getElementById('carousel');
+  document.getElementById('carPrev').onclick = ()=> car.scrollBy({left:-300,behavior:'smooth'});
+  document.getElementById('carNext').onclick = ()=> car.scrollBy({left:300,behavior:'smooth'});
+
+  // Compra: cargar horas según filtros
+  const elFecha = document.getElementById('cFecha');
+  const elPel = document.getElementById('cPelicula');
+  const elFormato = document.getElementById('cFormato');
+  const elHora = document.getElementById('cHora');
+
+  async function loadHoras(){
+    elHora.innerHTML = '<option value="">--</option>';
+    if(!elFecha.value || !elPel.value) return;
+    const params = new URLSearchParams({fecha: elFecha.value});
+    if (elPel.value) params.append('peliculaId', elPel.value);
+    if (elFormato.value) params.append('formato', elFormato.value);
+    const res = await fetch('/api/funciones?' + params.toString());
+    if (!res.ok) return;
+    const list = await res.json();
+    list.forEach(f=>{
+      const opt = document.createElement('option');
+      opt.value = f.id;
+      opt.textContent = `${f.hora} - Sala ${f.sala}`;
+      elHora.appendChild(opt);
+    });
+  }
+  [elFecha, elPel, elFormato].forEach(e=> e.addEventListener('change', loadHoras));
+
+  document.getElementById('btnComprar').addEventListener('click', ()=>{
+    const id = elHora.value;
+    if(!id){ alert('Selecciona fecha, película y hora'); return; }
+    window.location.href = `/funcion/${id}/seleccion`;
+  });
 </script>
 </body>
 </html>

@@ -32,6 +32,25 @@
     <div class="col-md-2"><input class="form-control" name="precioBase" placeholder="Precio" type="number" step="1" required></div>
     <div class="col-md-1"><button class="btn btn-primary w-100" type="submit">Crear</button></div>
   </form>
+  <!-- Edit form for funcion -->
+  <div th:if="${editFunc != null && editFunc.id != null}" class="mb-3">
+    <form th:action="@{'/admin/funciones/' + ${editFunc.id} + '/update'}" method="post" class="row g-2">
+      <div class="col-md-3">
+        <select name="peliculaId" class="form-select" required>
+          <option th:each="p: ${peliculas}" th:value="${p.id}" th:selected="${p.id==editFunc.pelicula.id}" th:text="${p.titulo}"></option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <select name="salaId" class="form-select" required>
+          <option th:each="s: ${salas}" th:value="${s.id}" th:selected="${s.id==editFunc.sala.id}" th:text="${s.nombre}"></option>
+        </select>
+      </div>
+      <div class="col-md-3"><input class="form-control" name="horaInicio" type="datetime-local" th:value="${#temporals.format(editFunc.horaInicio,'yyyy-MM-dd''T''HH:mm')}" required></div>
+      <div class="col-md-2"><input class="form-control" name="precioBase" placeholder="Precio" type="number" step="1" th:value="${editFunc.precioBase}" required></div>
+      <div class="col-md-1"><button class="btn btn-warning w-100" type="submit">Actualizar</button></div>
+      <div class="col-md-1"><form th:action="@{'/admin/funciones/' + ${editFunc.id} + '/delete'}" method="post"><button class="btn btn-danger w-100" type="submit">Eliminar</button></form></div>
+    </form>
+  </div>
 
   <table class="table table-striped">
     <thead><tr><th>ID</th><th>Película</th><th>Sala</th><th>Inicio</th><th>Precio</th></tr></thead>
@@ -42,6 +61,7 @@
         <td th:text="${f.sala.nombre}"></td>
         <td th:text="${#temporals.format(f.horaInicio,'dd/MM HH:mm')}"></td>
         <td th:text="${f.precioBase}"></td>
+        <td><a th:href="@{'/admin/funciones/' + ${f.id} + '/edit'}" class="btn btn-sm btn-outline-secondary">Editar</a></td>
       </tr>
     </tbody>
   </table>

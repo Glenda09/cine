@@ -36,6 +36,34 @@
     <div class="col-12"><input class="form-control" name="sinopsis" placeholder="Sinopsis"></div>
     <div class="col-12"><button class="btn btn-primary" type="submit">Crear</button></div>
   </form>
+  <!-- Edit form for pelicula -->
+  <div th:if="${editPeli != null && editPeli.id != null}" class="mb-3">
+    <form th:action="@{'/admin/peliculas/' + ${editPeli.id} + '/update'}" method="post" class="row g-2">
+      <div class="col-md-3"><input class="form-control" name="titulo" th:value="${editPeli.titulo}" required></div>
+      <div class="col-md-2"><input class="form-control" name="duracionMin" th:value="${editPeli.duracionMin}" type="number"></div>
+      <div class="col-md-3"><input class="form-control" name="posterUrl" th:value="${editPeli.posterUrl}"></div>
+      <div class="col-md-2">
+        <select class="form-select" name="clasif">
+          <option th:selected="${editPeli.clasificacionEdad.name()=='TP'}" value="TP">TP</option>
+          <option th:selected="${editPeli.clasificacionEdad.name()=='_7PLUS'}" value="_7PLUS">7+</option>
+          <option th:selected="${editPeli.clasificacionEdad.name()=='_12PLUS'}" value="_12PLUS">12+</option>
+          <option th:selected="${editPeli.clasificacionEdad.name()=='_15PLUS'}" value="_15PLUS">15+</option>
+          <option th:selected="${editPeli.clasificacionEdad.name()=='_18PLUS'}" value="_18PLUS">18+</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <select class="form-select" name="tipo">
+          <option th:selected="${editPeli.tipo.name()=='DOSD'}" value="DOSD">2D</option>
+          <option th:selected="${editPeli.tipo.name()=='TRESD'}" value="TRESD">3D</option>
+          <option th:selected="${editPeli.tipo.name()=='IMAX'}" value="IMAX">IMAX</option>
+        </select>
+      </div>
+      <div class="col-12"><input class="form-control" name="sinopsis" th:value="${editPeli.sinopsis}"></div>
+      <div class="col-12"><button class="btn btn-warning" type="submit">Actualizar</button>
+        <form th:action="@{'/admin/peliculas/' + ${editPeli.id} + '/delete'}" method="post" style="display:inline"><button class="btn btn-danger" type="submit">Eliminar</button></form>
+      </div>
+    </form>
+  </div>
 
   <div class="row row-cols-1 row-cols-md-3 g-3">
     <div class="col" th:each="p: ${list}">
@@ -46,6 +74,7 @@
           <p class="card-text" th:text="${p.sinopsis}"></p>
         </div>
       </div>
+      <div class="mt-2"><a th:href="@{'/admin/peliculas/' + ${p.id} + '/edit'}" class="btn btn-sm btn-outline-secondary">Editar</a></div>
     </div>
   </div>
 </main>

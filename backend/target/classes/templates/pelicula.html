@@ -20,14 +20,17 @@
             <p th:text="${pelicula.sinopsis}">Sinopsis</p>
             <p>Duración: <span th:text="${pelicula.duracionMin}">120</span> min</p>
             <h4 class="mt-4">Funciones próximas</h4>
-            <div class="list-group">
+            <div class="list-group" th:if="${!#lists.isEmpty(funciones)}">
                 <a th:each="f : ${funciones}" class="list-group-item list-group-item-action"
                    th:href="@{'/funcion/' + ${f.id} + '/seleccion'}">
-                    <span th:text="${#temporals.format(f.horaInicio, 'dd/MM HH:mm')}">Fecha</span>
-                    — Sala <span th:text="${f.sala.nombre}">Sala</span>
-                    — Precio $<span th:text="${f.precioBase}">0</span>
+              <input type="datetime-local" class="form-control d-inline w-auto" 
+                  th:value="${#temporals.format(f.horaInicio, 'yyyy-MM-dd''T''HH:mm')}" 
+                  disabled />
+                    &nbsp;· Sala <span th:text="${f.sala.nombre}">Sala</span>
+                    &nbsp;· Precio $<span th:text="${f.precioBase}">0</span>
                 </a>
             </div>
+            <p class="text-muted" th:if="${#lists.isEmpty(funciones)}">No hay funciones programadas para los próximos días.</p>
         </div>
     </div>
 </main>

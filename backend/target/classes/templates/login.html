@@ -46,7 +46,8 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
   const token = data.token;
   document.cookie = 'AUTH=' + token + '; Path=/; SameSite=Lax';
   localStorage.setItem('AUTH', token);
-  window.location.href = '/mis-compras';
+  // Ir al dashboard principal (cartelera)
+  window.location.href = '/';
 });
 </script>
 </body>

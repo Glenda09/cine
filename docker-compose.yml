@@ -31,6 +31,7 @@ services:
       WOMPI_INTEGRITY_KEY: integrity_test_YourIntegrityKey
       WOMPI_EVENTS_SECRET: events_test_YourEventsSecret
       WOMPI_REDIRECT_URL: http://localhost:8080/checkout/return
+      SPRING_APPLICATION_JSON: '{"logging":{"level":{"com.cine.security":"DEBUG"}}}'
     ports:
       - "8080:8080"
     depends_on:

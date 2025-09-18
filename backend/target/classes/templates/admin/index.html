@@ -11,6 +11,9 @@
     <a class="text-light" href="/">← Inicio</a>
     <h1 class="h5 m-0">Panel Admin</h1>
   </div>
+  <div class="row g-3 mt-2">
+    <div class="col-md-3"><a class="btn btn-secondary w-100" href="/admin/usuarios">Usuarios/Roles</a></div>
+  </div>
 </header>
 <main class="container py-4">
   <div class="row g-3">
@@ -22,7 +25,48 @@
   <div class="mt-4">
     <p>Películas: <b th:text="${pelis}"></b> — Salas: <b th:text="${salas}"></b> — Funciones: <b th:text="${funciones}"></b> — Categorías: <b th:text="${categorias}"></b></p>
   </div>
+  <!-- Tabla resumen / detalles bajo los botones -->
+  <div class="mt-4">
+    <h5>Detalles rápidos</h5>
+    <table class="table table-striped" id="adminDetails">
+      <thead>
+        <tr>
+          <th>Entidad</th>
+          <th>Cantidad</th>
+          <th>Último registro</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Películas</td>
+          <td th:text="${pelis}">0</td>
+          <td th:text="${ultimoPelicula}">-</td>
+          <td><a class="btn btn-sm btn-outline-primary" href="/admin/peliculas">Ver</a></td>
+        </tr>
+        <tr>
+          <td>Salas</td>
+          <td th:text="${salas}">0</td>
+          <td th:text="${ultimoSala}">-</td>
+          <td><a class="btn btn-sm btn-outline-primary" href="/admin/salas">Ver</a></td>
+        </tr>
+        <tr>
+          <td>Funciones</td>
+          <td th:text="${funciones}">0</td>
+          <td th:text="${ultimoFuncion}">-</td>
+          <td><a class="btn btn-sm btn-outline-primary" href="/admin/funciones">Ver</a></td>
+        </tr>
+        <tr>
+          <td>Categorías</td>
+          <td th:text="${categorias}">0</td>
+          <td th:text="${ultimoCategoria}">-</td>
+          <td><a class="btn btn-sm btn-outline-primary" href="/admin/categorias">Ver</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </main>
 </body>
 </html>
+
 

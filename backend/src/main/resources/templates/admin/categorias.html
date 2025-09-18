@@ -17,10 +17,22 @@
     <div class="col-auto"><input class="form-control" name="nombre" placeholder="Nombre"></div>
     <div class="col-auto"><button class="btn btn-primary" type="submit">Agregar</button></div>
   </form>
+  <!-- Edit form (reused) -->
+  <div th:if="${edit != null && edit.id != null}" class="mb-3">
+    <form th:action="@{'/admin/categorias/' + ${edit.id} + '/update'}" method="post" class="row g-2">
+      <div class="col-auto"><input class="form-control" name="nombre" th:value="${edit.nombre}"></div>
+      <div class="col-auto"><button class="btn btn-warning" type="submit">Actualizar</button></div>
+      <div class="col-auto"><form th:action="@{'/admin/categorias/' + ${edit.id} + '/delete'}" method="post"><button class="btn btn-danger" type="submit">Eliminar</button></form></div>
+    </form>
+  </div>
   <table class="table table-striped">
     <thead><tr><th>ID</th><th>Nombre</th></tr></thead>
     <tbody>
-      <tr th:each="c: ${list}"><td th:text="${c.id}"></td><td th:text="${c.nombre}"></td></tr>
+      <tr th:each="c: ${list}">
+        <td th:text="${c.id}"></td>
+        <td th:text="${c.nombre}"></td>
+        <td><a th:href="@{'/admin/categorias/' + ${c.id} + '/edit'}" class="btn btn-sm btn-outline-secondary">Editar</a></td>
+      </tr>
     </tbody>
   </table>
 </main>

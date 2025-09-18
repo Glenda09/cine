@@ -21,7 +21,21 @@
         <td th:text="${u.id}"></td>
         <td th:text="${u.nombre}"></td>
         <td th:text="${u.email}"></td>
-        <td><span class="badge bg-secondary badge-role" th:text="${u.rol}"></span></td>
+        <td>
+          <span class="badge bg-secondary badge-role" th:text="${u.rol}"></span>
+        </td>
+        <td>
+          <form th:action="@{'/admin/usuarios/' + ${u.id} + '/role'}" method="post" style="display:inline">
+            <select name="rol" class="form-select form-select-sm" style="display:inline-block;width:auto">
+              <option th:selected="${u.rol.name()=='USER'}" value="USER">USER</option>
+              <option th:selected="${u.rol.name()=='ADMIN'}" value="ADMIN">ADMIN</option>
+            </select>
+            <button class="btn btn-sm btn-outline-primary" type="submit">Cambiar</button>
+          </form>
+          <form th:action="@{'/admin/usuarios/' + ${u.id} + '/delete'}" method="post" style="display:inline;margin-left:6px">
+            <button class="btn btn-sm btn-outline-danger">Eliminar</button>
+          </form>
+        </td>
       </tr>
     </tbody>
   </table>

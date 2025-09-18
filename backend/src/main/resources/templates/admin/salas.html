@@ -19,10 +19,26 @@
     <div class="col-md-2"><input class="form-control" name="columnas" placeholder="Columnas" type="number" required></div>
     <div class="col-md-2"><button class="btn btn-primary w-100" type="submit">Crear</button></div>
   </form>
+  <!-- Edit form for salas -->
+  <div th:if="${editSala != null && editSala.id != null}" class="mb-3">
+    <form th:action="@{'/admin/salas/' + ${editSala.id} + '/update'}" method="post" class="row g-2">
+      <div class="col-md-4"><input class="form-control" name="nombre" th:value="${editSala.nombre}" required></div>
+      <div class="col-md-2"><input class="form-control" name="filas" type="number" th:value="${editSala.filas}" required></div>
+      <div class="col-md-2"><input class="form-control" name="columnas" type="number" th:value="${editSala.columnas}" required></div>
+      <div class="col-md-2"><button class="btn btn-warning w-100" type="submit">Actualizar</button></div>
+      <div class="col-md-2"><form th:action="@{'/admin/salas/' + ${editSala.id} + '/delete'}" method="post"><button class="btn btn-danger w-100" type="submit">Eliminar</button></form></div>
+    </form>
+  </div>
   <table class="table table-striped">
     <thead><tr><th>ID</th><th>Nombre</th><th>Filas</th><th>Columnas</th></tr></thead>
     <tbody>
-    <tr th:each="s: ${list}"><td th:text="${s.id}"></td><td th:text="${s.nombre}"></td><td th:text="${s.filas}"></td><td th:text="${s.columnas}"></td></tr>
+    <tr th:each="s: ${list}">
+      <td th:text="${s.id}"></td>
+      <td th:text="${s.nombre}"></td>
+      <td th:text="${s.filas}"></td>
+      <td th:text="${s.columnas}"></td>
+      <td><a th:href="@{'/admin/salas/' + ${s.id} + '/edit'}" class="btn btn-sm btn-outline-secondary">Editar</a></td>
+    </tr>
     </tbody>
   </table>
 </main>
