@@ -99,6 +99,13 @@
   }
   function parseJwt(t){ try{ const p=t.split('.')[1]; return JSON.parse(atob(p.replace(/-/g,'+').replace(/_/g,'/'))); }catch(e){ return {}; } }
   const token = getToken();
+  if (token) {
+    const cookieMatch = document.cookie.match(/(?:^|; )AUTH=([^;]+)/);
+    const current = cookieMatch ? cookieMatch[1] : '';
+    if (current !== token) {
+      document.cookie = 'AUTH=' + token + '; Path=/; SameSite=Lax';
+    }
+  }
   const logged = !!token;
   document.getElementById('linkLogin').style.display = logged? 'none':'inline';
   document.getElementById('linkRegister').style.display = logged? 'none':'inline';
@@ -145,3 +152,5 @@
 </script>
 </body>
 </html>
+
+

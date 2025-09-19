@@ -9,12 +9,18 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.Objects;
 
 import static com.cine.domain.Enums.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
 
 @Controller
 @RequestMapping("/admin")
 public class AdminPageController {
+    private static final Logger log = LoggerFactory.getLogger(AdminPageController.class);
     private final CategoriaRepository categoriaRepository;
     private final PeliculaRepository peliculaRepository;
     private final SalaRepository salaRepository;
@@ -38,12 +44,89 @@ public class AdminPageController {
 
     @GetMapping
     public String index(Model model) {
+        Authentication auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null) {
+            log.info("Access to /admin without authentication");
+        } else {
+            log.info("Access to /admin by principal='{}' authorities='{}'", auth.getName(), auth.getAuthorities());
+        }
         model.addAttribute("pelis", peliculaRepository.count());
         model.addAttribute("salas", salaRepository.count());
         model.addAttribute("funciones", funcionRepository.count());
         model.addAttribute("categorias", categoriaRepository.count());
+
+        var dashboardPeliculas = peliculaRepository.findAllWithCategorias().stream()
+                .sorted(Comparator.comparing((Pelicula p) -> p.getId() == null ? 0L : p.getId()).reversed())
+                .limit(6)
+                .map(AdminPageController::toDashboardRow)
+                .toList();
+        model.addAttribute("dashboardPeliculas", dashboardPeliculas);
         return "admin/index";
     }
+
+    private static AdminMovieRow toDashboardRow(Pelicula pelicula) {
+        String genero = resolveGenero(pelicula);
+        String clasificacion = pelicula.getClasificacionEdad() != null
+                ? formatClasificacion(pelicula.getClasificacionEdad())
+                : "Sin clasificacion";
+        int calificacion = calculateRating(pelicula.getDuracionMin());
+        return new AdminMovieRow(
+                pelicula.getId(),
+                pelicula.getTitulo(),
+                "Sin director asignado",
+                genero,
+                clasificacion,
+                calificacion
+        );
+    }
+
+    private static String resolveGenero(Pelicula pelicula) {
+        if (pelicula.getCategorias() != null && !pelicula.getCategorias().isEmpty()) {
+            var categoria = pelicula.getCategorias().stream()
+                    .map(Categoria::getNombre)
+                    .filter(Objects::nonNull)
+                    .map(String::trim)
+                    .filter(nombre -> !nombre.isEmpty())
+                    .sorted(String.CASE_INSENSITIVE_ORDER)
+                    .findFirst()
+                    .orElse(null);
+            if (categoria != null) {
+                return categoria;
+            }
+        }
+        return formatTipo(pelicula.getTipo());
+    }
+
+    private static String formatTipo(TipoPelicula tipo) {
+        if (tipo == null) {
+            return "Sin categoria";
+        }
+        return switch (tipo) {
+            case DOSD -> "2D";
+            case TRESD -> "3D";
+            case IMAX -> "IMAX";
+        };
+    }
+
+    private static String formatClasificacion(ClasificacionEdad clasificacion) {
+        return switch (clasificacion) {
+            case TP -> "Todo publico";
+            case _7PLUS -> "Mayores de 7 anos";
+            case _12PLUS -> "Mayores de 12 anos";
+            case _15PLUS -> "Mayores de 15 anos";
+            case _18PLUS -> "Mayores de 18 anos";
+        };
+    }
+
+    private static int calculateRating(Integer duracionMin) {
+        if (duracionMin == null || duracionMin <= 0) {
+            return 0;
+        }
+        double normalized = Math.min(1.0, duracionMin / 120.0);
+        return (int) Math.round(normalized * 100);
+    }
+
+    private record AdminMovieRow(Long id, String titulo, String director, String genero, String clasificacion, int calificacion) { }
 
     // Categorías
     @GetMapping("/categorias")
@@ -274,4 +357,7 @@ public class AdminPageController {
         return "redirect:/admin/usuarios";
     }
 }
+
+
+
 

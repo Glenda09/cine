@@ -8,6 +8,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -19,6 +21,7 @@ import static com.cine.domain.Enums.RolUsuario;
 public class AuthController {
     private final AuthService authService;
     private final JwtUtil jwtUtil;
+    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
     public AuthController(AuthService authService, JwtUtil jwtUtil) {
         this.authService = authService;
@@ -41,6 +44,7 @@ public class AuthController {
     }
 
     private ResponseEntity<?> respondWithToken(String token) {
+    log.info("Issuing auth token of length {}", token != null ? token.length() : 0);
         ResponseCookie cookie = ResponseCookie.from("AUTH", token)
                 .path("/")
                 .sameSite("Lax")
@@ -54,10 +58,12 @@ public class AuthController {
     // Ayuda: si acceden por GET a /api/auth/login o /api/auth/register, redirige a las páginas HTML
     @GetMapping("/login")
     public ResponseEntity<?> loginGet() {
+        log.debug("GET /api/auth/login -> redirecting to /login");
         return ResponseEntity.status(302).header("Location", "/login").build();
     }
     @GetMapping("/register")
     public ResponseEntity<?> registerGet() {
+        log.debug("GET /api/auth/register -> redirecting to /register");
         return ResponseEntity.status(302).header("Location", "/register").build();
     }
 
