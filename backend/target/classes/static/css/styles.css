@@ -6,4 +6,31 @@ main{padding:16px;}
 .card{background:#fff;border-radius:8px;padding:12px;box-shadow:0 1px 3px rgba(0,0,0,.1)}
 img{max-width:100%;height:auto;display:block}
 
+header.bg-dark{padding:0;display:block}
+header.bg-dark nav a{color:inherit;opacity:.85;text-decoration:none}
+header.bg-dark nav a:hover{opacity:1}
+.brand-logo{letter-spacing:.05em;display:inline-flex;align-items:center;gap:.35rem}
 
+.purchases{max-width:960px;margin:0 auto;padding:0 1rem}
+.purchase-wrapper{background:#fff;border-radius:24px;box-shadow:0 10px 40px rgba(25,25,30,.08)}
+.purchase-section+.purchase-section{margin-top:2.5rem}
+.section-title{letter-spacing:.18em}
+.purchase-list{display:flex;flex-direction:column;gap:1rem}
+.purchase-item{display:grid;grid-template-columns:72px minmax(0,1fr) auto;gap:1rem;padding:1.1rem 1.25rem;border-radius:20px;background:linear-gradient(135deg,#fafafa,#f2f4ff);border:1px solid rgba(0,0,0,.05);transition:transform .2s ease,box-shadow .2s ease}
+.purchase-item:hover{transform:translateY(-2px);box-shadow:0 14px 28px rgba(57,59,107,.12)}
+.purchase-cover{width:72px;height:72px;border-radius:18px;overflow:hidden;background:#e5e7ff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:1.5rem;color:#383c74;text-transform:uppercase}
+.purchase-cover img{width:100%;height:100%;object-fit:cover}
+.purchase-info{display:flex;flex-direction:column;gap:.35rem}
+.purchase-info h3{font-weight:600;color:#1c1c24}
+.purchase-info p{margin:0}
+.purchase-ticket{margin-top:.25rem;font-weight:600;text-decoration:none;color:#c61d6b}
+.purchase-ticket:hover{text-decoration:underline}
+.purchase-total{display:flex;align-items:center;font-weight:700;color:#1f1f31;font-size:1.05rem}
+.purchase-total .amount{font-size:1.15rem}
+.empty-state{background:linear-gradient(135deg,#f6f7fb,#eef1ff);border-radius:24px}
+
+@media(max-width:768px){
+  .purchase-item{grid-template-columns:56px 1fr;gap:.75rem;align-items:start}
+  .purchase-total{grid-column:1 / -1;justify-content:flex-start}
+  .purchase-total .amount{font-size:1.05rem}
+}

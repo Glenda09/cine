@@ -4,29 +4,120 @@
     <meta charset="UTF-8" />
     <title>Mis compras</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 </head>
 <body>
-<header>
-    <a href="/">‚Üê Volver</a>
-    <h1>Mis compras</h1>
-    <a href="/login" id="linkLogin">Iniciar sesi√≥n</a>
-    <a href="/logout" id="linkLogout" style="display:none">Salir</a>
-  </header>
-<main>
-    <div th:if="${#lists.isEmpty(reservas)}">No hay compras o no has iniciado sesi√≥n.</div>
-    <ul>
-        <li th:each="r: ${reservas}">
-            Reserva <b th:text="${r.id}"></b> - Total $<span th:text="${r.total}"></span> -
-            Estado <span th:text="${r.estado}"></span>
-            <span th:if="${r.estado.name() == 'PAGADA'}"> | <a th:href="@{'/tickets/' + ${r.id} + '.png'}" target="_blank">Descargar QR</a></span>
-        </li>
-    </ul>
+<header class="bg-dark text-white shadow-sm">
+    <div class="container py-3 d-flex flex-wrap align-items-center gap-3">
+        <a href="/" class="brand-logo text-white fw-semibold text-decoration-none fs-5">CineApp</a>
+        <nav class="d-flex gap-3 small">
+            <a class="text-decoration-none text-light" href="/">Inicio</a>
+            <a class="text-decoration-none text-light" href="/">Cartelera</a>
+            <a class="text-decoration-none text-light" href="/mis-compras">Mis compras</a>
+        </nav>
+        <a class="ms-auto btn btn-outline-light btn-sm" href="/admin" id="linkAdmin" style="display:none">Admin</a>
+        <div class="d-flex gap-2">
+            <a class="btn btn-outline-light btn-sm" href="/login" id="linkLogin">Iniciar sesiÛn</a>
+            <a class="btn btn-outline-light btn-sm" href="/register" id="linkRegister">Registrarse</a>
+            <a class="btn btn-warning btn-sm" href="/logout" id="linkLogout" style="display:none">Salir</a>
+        </div>
+    </div>
+</header>
+<main class="container py-5 purchases">
+    <div class="purchase-wrapper bg-white rounded-4 shadow-sm p-4 p-md-5">
+        <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-4">
+            <div>
+                <p class="text-uppercase text-muted small mb-1">Historial</p>
+                <h1 class="h3 mb-0">Mis compras</h1>
+            </div>
+            <div class="text-muted small" th:if="${hasPurchases}" th:text="${#numbers.formatInteger(#lists.size(reservas), 1)} + ' compras'">0 compras</div>
+        </div>
+
+        <div class="empty-state text-center py-5" th:if="${!hasPurchases}">
+            <h2 class="h5 text-muted">No tienes compras registradas todavÌa.</h2>
+            <p class="text-muted mb-4">Inicia sesiÛn y reserva tus asientos para ver tu historial aquÌ.</p>
+            <a class="btn btn-danger" href="/">Ver cartelera</a>
+        </div>
+
+        <div th:if="${hasPurchases}" class="d-flex flex-column gap-5">
+            <section class="purchase-section" th:if="${!#lists.isEmpty(recent)}">
+                <h2 class="section-title h6 text-uppercase text-muted fw-semibold mb-3">Compras recientes</h2>
+                <div class="purchase-list">
+                    <article class="purchase-item" th:each="compra : ${recent}">
+                        <div class="purchase-cover">
+                            <img th:if="${compra.posterUrl != null && !compra.posterUrl.isEmpty()}" th:src="${compra.posterUrl}" alt="Poster" />
+                            <div class="purchase-cover placeholder" th:unless="${compra.posterUrl != null && !compra.posterUrl.isEmpty()}" th:text="${#strings.isEmpty(compra.titulo) ? 'C' : #strings.substring(compra.titulo,0,1)}"></div>
+                        </div>
+                        <div class="purchase-info">
+                            <div class="d-flex flex-wrap gap-2 align-items-center mb-1">
+                                <h3 class="h6 mb-0" th:text="${compra.titulo}">TÌtulo</h3>
+                                <span class="badge rounded-pill bg-success-subtle text-success-emphasis" th:if="${compra.pagada}">Pagada</span>
+                                <span class="badge rounded-pill bg-secondary-subtle text-secondary-emphasis" th:if="${!compra.pagada}" th:text="${compra.estado}">Pendiente</span>
+                            </div>
+                            <p class="text-muted small mb-2">Sala <span th:text="${compra.sala}">1</span> ∑ <span th:text="${#temporals.format(compra.fecha, 'dd MMM yyyy HH:mm')}">20 Abr 2025 18:00</span></p>
+                            <p class="text-body-secondary small mb-0">Asientos: <span class="fw-semibold" th:text="${compra.asientos}">A1, A2</span></p>
+                            <a class="purchase-ticket small" th:if="${compra.pagada}" th:href="@{'/tickets/' + ${compra.id} + '.png'}" target="_blank">Descargar ticket QR</a>
+                        </div>
+                        <div class="purchase-total">
+                            <span class="amount" th:text="${'$' + #numbers.formatDecimal(compra.total, 1, 'COMMA', 2, 'POINT')}">$0.00</span>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <section class="purchase-section" th:if="${!#lists.isEmpty(previous)}">
+                <h2 class="section-title h6 text-uppercase text-muted fw-semibold mb-3">Compras anteriores</h2>
+                <div class="purchase-list">
+                    <article class="purchase-item" th:each="compra : ${previous}">
+                        <div class="purchase-cover">
+                            <img th:if="${compra.posterUrl != null && !compra.posterUrl.isEmpty()}" th:src="${compra.posterUrl}" alt="Poster" />
+                            <div class="purchase-cover placeholder" th:unless="${compra.posterUrl != null && !compra.posterUrl.isEmpty()}" th:text="${#strings.isEmpty(compra.titulo) ? 'C' : #strings.substring(compra.titulo,0,1)}"></div>
+                        </div>
+                        <div class="purchase-info">
+                            <div class="d-flex flex-wrap gap-2 align-items-center mb-1">
+                                <h3 class="h6 mb-0" th:text="${compra.titulo}">TÌtulo</h3>
+                                <span class="badge rounded-pill bg-success-subtle text-success-emphasis" th:if="${compra.pagada}">Pagada</span>
+                                <span class="badge rounded-pill bg-secondary-subtle text-secondary-emphasis" th:if="${!compra.pagada}" th:text="${compra.estado}">Pendiente</span>
+                            </div>
+                            <p class="text-muted small mb-2">Sala <span th:text="${compra.sala}">1</span> ∑ <span th:text="${#temporals.format(compra.fecha, 'dd MMM yyyy HH:mm')}">20 Abr 2025 18:00</span></p>
+                            <p class="text-body-secondary small mb-0">Asientos: <span class="fw-semibold" th:text="${compra.asientos}">A1, A2</span></p>
+                            <a class="purchase-ticket small" th:if="${compra.pagada}" th:href="@{'/tickets/' + ${compra.id} + '.png'}" target="_blank">Descargar ticket QR</a>
+                        </div>
+                        <div class="purchase-total">
+                            <span class="amount" th:text="${'$' + #numbers.formatDecimal(compra.total, 1, 'COMMA', 2, 'POINT')}">$0.00</span>
+                        </div>
+                    </article>
+                </div>
+            </section>
+        </div>
+    </div>
 </main>
 <script>
-  function hasToken(){ return document.cookie.split('; ').some(x=>x.startsWith('AUTH=')); }
-  const logged = hasToken();
-  document.getElementById('linkLogin').style.display = logged? 'none':'inline';
-  document.getElementById('linkLogout').style.display = logged? 'inline':'none';
+  function getToken(){
+    const fromCookie = (document.cookie.match(/(?:^|; )AUTH=([^;]+)/)||[])[1];
+    return fromCookie || localStorage.getItem('AUTH') || '';
+  }
+  function parseJwt(token){
+    try {
+      const base = token.split('.')[1];
+      return JSON.parse(atob(base.replace(/-/g,'+').replace(/_/g,'/')));
+    } catch (e) {
+      return {};
+    }
+  }
+  const token = getToken();
+  const logged = !!token;
+  const linkLogin = document.getElementById('linkLogin');
+  const linkRegister = document.getElementById('linkRegister');
+  const linkLogout = document.getElementById('linkLogout');
+  if (linkLogin) linkLogin.style.display = logged ? 'none' : 'inline-flex';
+  if (linkRegister) linkRegister.style.display = logged ? 'none' : 'inline-flex';
+  if (linkLogout) linkLogout.style.display = logged ? 'inline-flex' : 'none';
+  const linkAdmin = document.getElementById('linkAdmin');
+  const role = parseJwt(token).role;
+  if (linkAdmin && logged && role === 'ADMIN') {
+    linkAdmin.style.display = 'inline-flex';
+  }
 </script>
 </body>
 </html>
