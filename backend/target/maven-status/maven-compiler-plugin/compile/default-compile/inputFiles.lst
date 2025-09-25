@@ -10,6 +10,7 @@
 /app/src/main/java/com/cine/controller/ComprasController.java
 /app/src/main/java/com/cine/controller/FuncionController.java
 /app/src/main/java/com/cine/controller/FunctionPageController.java
+/app/src/main/java/com/cine/controller/GlobalExceptionHandler.java
 /app/src/main/java/com/cine/controller/PublicController.java
 /app/src/main/java/com/cine/controller/ReservaController.java
 /app/src/main/java/com/cine/controller/TicketController.java

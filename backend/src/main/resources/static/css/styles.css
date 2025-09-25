@@ -4,6 +4,6 @@ header a{color:#ddd;text-decoration:none}
 main{padding:16px;}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
 .card{background:#fff;border-radius:8px;padding:12px;box-shadow:0 1px 3px rgba(0,0,0,.1)}
-.row{display:flex;gap:16px;align-items:flex-start}
 img{max-width:100%;height:auto;display:block}
+
 
