@@ -22,7 +22,9 @@
     <form th:action="@{'/admin/categorias/' + ${edit.id} + '/update'}" method="post" class="row g-2">
       <div class="col-auto"><input class="form-control" name="nombre" th:value="${edit.nombre}"></div>
       <div class="col-auto"><button class="btn btn-warning" type="submit">Actualizar</button></div>
-      <div class="col-auto"><form th:action="@{'/admin/categorias/' + ${edit.id} + '/delete'}" method="post"><button class="btn btn-danger" type="submit">Eliminar</button></form></div>
+    </form>
+    <form th:action="@{'/admin/categorias/' + ${edit.id} + '/delete'}" method="post" class="mt-2">
+      <button class="btn btn-danger" type="submit" onclick="return confirm('¿Estás seguro de que quieres eliminar esta categoría?')">Eliminar</button>
     </form>
   </div>
   <table class="table table-striped">

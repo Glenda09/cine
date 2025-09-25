@@ -14,7 +14,6 @@ import static com.cine.domain.Enums.*;
 
 @RestController
 @RequestMapping("/api/admin")
-//prueba
 public class AdminController {
     private final PeliculaRepository peliculaRepository;
     private final SalaRepository salaRepository;

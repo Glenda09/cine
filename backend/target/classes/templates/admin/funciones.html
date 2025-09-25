@@ -48,7 +48,9 @@
       <div class="col-md-3"><input class="form-control" name="horaInicio" type="datetime-local" th:value="${#temporals.format(editFunc.horaInicio,'yyyy-MM-dd''T''HH:mm')}" required></div>
       <div class="col-md-2"><input class="form-control" name="precioBase" placeholder="Precio" type="number" step="1" th:value="${editFunc.precioBase}" required></div>
       <div class="col-md-1"><button class="btn btn-warning w-100" type="submit">Actualizar</button></div>
-      <div class="col-md-1"><form th:action="@{'/admin/funciones/' + ${editFunc.id} + '/delete'}" method="post"><button class="btn btn-danger w-100" type="submit">Eliminar</button></form></div>
+    </form>
+    <form th:action="@{'/admin/funciones/' + ${editFunc.id} + '/delete'}" method="post" class="mt-2">
+      <button class="btn btn-danger" type="submit" onclick="return confirm('¿Estás seguro de que quieres eliminar esta función? Esto también eliminará todas las reservas asociadas.')">Eliminar</button>
     </form>
   </div>
 

@@ -22,7 +22,6 @@ public class JwtUtil {
     public JwtUtil(@Value("${security.jwt.secret}") String secret,
                    @Value("${security.jwt.expirationMinutes}") long expMinutes) {
         byte[] raw = secret.getBytes(StandardCharsets.UTF_8);
-        // Ensure 256-bit key: if too short, derive with SHA-256
         if (raw.length < 32) {
             try {
                 raw = MessageDigest.getInstance("SHA-256").digest(raw);

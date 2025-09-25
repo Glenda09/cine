@@ -25,8 +25,10 @@
       <div class="col-md-4"><input class="form-control" name="nombre" th:value="${editSala.nombre}" required></div>
       <div class="col-md-2"><input class="form-control" name="filas" type="number" th:value="${editSala.filas}" required></div>
       <div class="col-md-2"><input class="form-control" name="columnas" type="number" th:value="${editSala.columnas}" required></div>
-      <div class="col-md-2"><button class="btn btn-warning w-100" type="submit">Actualizar</button></div>
-      <div class="col-md-2"><form th:action="@{'/admin/salas/' + ${editSala.id} + '/delete'}" method="post"><button class="btn btn-danger w-100" type="submit">Eliminar</button></form></div>
+      <div class="col-md-4"><button class="btn btn-warning" type="submit">Actualizar</button></div>
+    </form>
+    <form th:action="@{'/admin/salas/' + ${editSala.id} + '/delete'}" method="post" class="mt-2">
+      <button class="btn btn-danger" type="submit" onclick="return confirm('¿Estás seguro de que quieres eliminar esta sala? Esto también eliminará todos los asientos asociados.')">Eliminar</button>
     </form>
   </div>
   <table class="table table-striped">
