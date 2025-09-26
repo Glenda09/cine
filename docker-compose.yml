@@ -1,7 +1,8 @@
 version: "3.9"
+
 services:
   postgres:
-    image: postgres:15
+    image: postgres:15-alpine
     environment:
       POSTGRES_DB: cine
       POSTGRES_USER: postgres
@@ -10,42 +11,36 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d cine"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
 
   redis:
-    image: redis:7
+    image: redis:7-alpine
     ports:
       - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
 
-  app:
-    build: ./backend
-    environment:
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_NAME: cine
-      DB_USER: postgres
-      DB_PASSWORD: admin
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-      JWT_SECRET: supersecretkeymustbeatleast32byteslong1234
-      WOMPI_PUBLIC_KEY: pub_test_YourPublicKey
-      WOMPI_INTEGRITY_KEY: integrity_test_YourIntegrityKey
-      WOMPI_EVENTS_SECRET: events_test_YourEventsSecret
-      WOMPI_REDIRECT_URL: http://localhost:8080/checkout/return
-      SPRING_APPLICATION_JSON: '{"logging":{"level":{"com.cine.security":"DEBUG"}}}'
-    ports:
-      - "8080:8080"
-    depends_on:
-      - postgres
-      - redis
-
-  # Desarrollo con hot reload (DevTools)
+  # Solo app-dev en desarrollo (Maven + Spring Boot dev profile)
   app-dev:
     image: maven:3.9.6-eclipse-temurin-17
     working_dir: /app
     command: mvn -Dspring-boot.run.profiles=dev spring-boot:run
     ports:
       - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     environment:
+      SPRING_PROFILES_ACTIVE: dev
       DB_HOST: postgres
       DB_PORT: 5432
       DB_NAME: cine
@@ -54,16 +49,30 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: 6379
       JWT_SECRET: change-me-super-secret
-      WOMPI_PUBLIC_KEY: pub_test_YourPublicKey
-      WOMPI_INTEGRITY_KEY: integrity_test_YourIntegrityKey
-      WOMPI_EVENTS_SECRET: events_test_YourEventsSecret
-      WOMPI_REDIRECT_URL: http://localhost:8080/checkout/return
+
+      # Propiedades de la integración Wompi
+      # (ajusta claves/moneda/checkoutBase según tu país: .sv, .co, etc.)
+      SPRING_APPLICATION_JSON: |
+        {
+          "wompi": {
+            "publicKey": "pub_test_YourPublicKey",
+            "integrityKey": "integrity_test_YourIntegrityKey",
+            "eventsSecret": "events_test_YourEventsSecret",
+            "redirectUrl": "http://localhost:8080/checkout/return",
+            "currency": "USD",
+            "checkoutBase": "https://checkout.wompi.sv/p/"
+          },
+          "logging": {
+            "level": {
+              "com.cine": "INFO",
+              "com.cine.security": "DEBUG"
+            }
+          }
+        }
+      MAVEN_OPTS: "-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
     volumes:
       - ./backend:/app
       - m2:/root/.m2
-    depends_on:
-      - postgres
-      - redis
 
 volumes:
   pgdata:

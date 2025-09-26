@@ -1,25 +1,24 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" />
-    <title>Checkout Wompi</title>
-    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+  <meta charset="UTF-8">
+  <title>Pago con Wompi</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 </head>
-<body>
-<main>
-    <h2>Redirigiendo a Wompi…</h2>
-    <form id="wompiForm" method="GET" th:action="${checkoutBaseUrl}">
-        <input type="hidden" name="public-key" th:value="${publicKey}" />
-        <input type="hidden" name="currency" th:value="${currency}" />
-        <input type="hidden" name="amount-in-cents" th:value="${amountInCents}" />
-        <input type="hidden" name="reference" th:value="${reference}" />
-        <input type="hidden" name="redirect-url" th:value="${redirectUrl}" />
-        <input type="hidden" name="signature:integrity" th:value="${signature}" />
-    </form>
-    <script>
-        document.getElementById('wompiForm').submit();
-    </script>
-</main>
-</body>
-</html>
+<body class="container py-5">
 
+  <h3 class="mb-3">Finalizar compra</h3>
+  <p>
+    Monto a pagar:
+    <strong>$<span th:text="${amountInCents/100}"></span> <span th:text="${currency}"></span></strong>
+  </p>
+  <p>Referencia: <span th:text="${reference}"></span></p>
+
+  <!-- Botón Wompi -->
+  <div class="wompi_button_widget" data-url-pago="https://pagos.wompi.sv/IntentoPago/Redirect?id=80b43700-ab02-44c3-9cb0-2196025ec520&esWidget=1" data-render="widget">
+    
+  </div>
+
+  <!-- Script de Wompi -->
+ <script src="https://pagos.wompi.sv/js/wompi.pagos.js"></script>
+</html>
